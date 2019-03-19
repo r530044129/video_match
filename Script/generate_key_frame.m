@@ -5,9 +5,11 @@
 % frames differ, and then extracting frames 
 % type == 0 is material; else if composed; 
 
-function generate_key_frame(inputfilename,type)
-    V = strcat('Shoot/material/',inputfilename,'.m4v');  %Video Name  
-    vidobj = VideoReader(V);   
+function generate_key_frame(Path,inputfilename,type)
+%     Path = '/Volumes/ÕÅÈÊ½ÜµÄÓ²ÅÌ/test/';
+%     inputfilename = 'A012C017_171111_R2G2.mov';
+%     Path = strcat('Shoot/material/',inputfilename,'.m4v');  %Video Name  
+    vidobj = VideoReader(strcat(Path, inputfilename));   
 
     % loop through frames to determine mean and stddev
     N=vidobj.NumberofFrames;            
@@ -24,20 +26,19 @@ function generate_key_frame(inputfilename,type)
                 X(i)=in;
             end
     end
-
     % extracts frames from threshold cacluated from the std. dev and mean
     mean=mean2(X);
     std=std2(X);
-    time = 3;
+    time = 4;
     threshold=mean+std*time;
     if type == 0
-        KeyframesPath = fullfile('Keyframes','material',inputfilename);
+        saveKeyframesPath = fullfile('Keyframes','material',inputfilename);
     else
-        KeyframesPath = fullfile('Keyframes','composed',inputfilename);
+        saveKeyframesPath = fullfile('Keyframes','composed',inputfilename);
     end
     
-    if ~exist(KeyframesPath)
-        mkdir(KeyframesPath)
+    if ~exist(saveKeyframesPath)
+        mkdir(saveKeyframesPath)
     end
     for i=1:N
         p=read(vidobj,i);
@@ -50,7 +51,7 @@ function generate_key_frame(inputfilename,type)
                 diff=imabsdiff(Hfr1,Hfr2);
                 in=sum(diff);
                 if(in>threshold)  
-                    filename = fullfile(KeyframesPath, sprintf('frame_%05d.JPG', i));  
+                    filename = fullfile(saveKeyframesPath, sprintf('frame_%05d.JPG', i));  
                     imwrite(j, filename);
                 end 
             end
