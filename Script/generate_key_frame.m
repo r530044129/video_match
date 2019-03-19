@@ -3,7 +3,9 @@
 % the following program preforms key frame extraction by taking the
 % histogram difference between two frames, then testing how much the two
 % frames differ, and then extracting frames 
-function generate_key_frame(inputfilename)
+% type == 0 is material; else if composed; 
+
+function generate_key_frame(inputfilename,type)
     V = strcat('Shoot/material/',inputfilename,'.m4v');  %Video Name  
     vidobj = VideoReader(V);   
 
@@ -26,9 +28,14 @@ function generate_key_frame(inputfilename)
     % extracts frames from threshold cacluated from the std. dev and mean
     mean=mean2(X);
     std=std2(X);
-    time = 1.5;
+    time = 3;
     threshold=mean+std*time;
-    KeyframesPath = fullfile('Keyframes','composed',inputfilename);
+    if type == 0
+        KeyframesPath = fullfile('Keyframes','material',inputfilename);
+    else
+        KeyframesPath = fullfile('Keyframes','composed',inputfilename);
+    end
+    
     if ~exist(KeyframesPath)
         mkdir(KeyframesPath)
     end

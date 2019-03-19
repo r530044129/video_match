@@ -1,6 +1,6 @@
 clc;clear;
 %   step 1 :read composed video
-composed_path = 'Shoot/composed/shining_color_change.m4v';
+composed_path = 'Shoot/composed/shining_s_curve.mp4';
 composedObj = VideoReader(composed_path);
 composed_frame = 1;
 
@@ -23,17 +23,22 @@ end
 material_keyframes_path = fullfile('Keyframes','material');
 keyframesFiles = dir(strcat(material_keyframes_path,'/shining*')); 
 numfiles = length(keyframesFiles);
-keyframesFilesCell = cell(numfiles, 1);
+temp = cell(numfiles,1);
+keyframesStruct = struct('shootName',temp,'minMean',temp,'value',0);
 for k = 1:numfiles
     single_material_keyframes_path = fullfile(material_keyframes_path,keyframesFiles(k).name);
-    singlgKeyframesFiles = dir(strcat(single_material_keyframes_path,'/*JPG'));
-    singlgKeyframes = length(singlgKeyframesFiles);
-    keyframesFilesCell{k, 1} = cell(singlgKeyframes,2);
-    for j = 1:singlgKeyframes
-        jpg_path = fullfile(single_material_keyframes_path,singlgKeyframesFiles(j).name);
+    singleKeyframesFiles = dir(strcat(single_material_keyframes_path,'/*JPG'));
+    singleKeyframes = length(singleKeyframesFiles);
+    allKeyframesMean = zeros(singleKeyframes,1);
+%     caculate min_delta_mean key frames at each file
+    for j = 1:singleKeyframes
+        jpg_path = fullfile(single_material_keyframes_path,singleKeyframesFiles(j).name);
         temp1 = rgb2gray(imread(jpg_path)); 
-        keyframesFilesCell{k, 1}{j, 1} = temp1(1:sample_ratio:Height,1:sample_ratio:Width);
-        temp2 = abs(composedArray(:,:,1) - keyframesFilesCell{k, 1}{j, 1});
-        keyframesFilesCell{k, 1}{j, 2} = mean(mean(temp2));
+        temp1_scaled = temp1(1:sample_ratio:Height,1:sample_ratio:Width);
+        temp2 = abs(composedArray(:,:,1) - temp1_scaled);
+        allKeyframesMean(j,1) = mean(mean(temp2));
     end
+    keyframesStruct(k).shootName = keyframesFiles(k).name;
+    keyframesStruct(k).minMean = min(allKeyframesMean);
 end
+    
