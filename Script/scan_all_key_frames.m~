@@ -32,8 +32,20 @@ for k = 1:numfiles
     for j = 1:singlgKeyframes
         jpg_path = fullfile(single_material_keyframes_path,singlgKeyframesFiles(j).name);
         temp1 = rgb2gray(imread(jpg_path)); 
-        keyframesFilesCell{k, 1}{j, 1} = temp1(1:sample_ratio:Height,1:sample_ratio:Width);
-        temp2 = abs(composedArray(:,:,1) - keyframesFilesCell{k, 1}{j, 1});
-        keyframesFilesCell{k, 1}{j, 2} = mean(mean(temp2));
-    end
+        material_keyframes{k, 1} = temp1(1:sample_ratio:Height,1:sample_ratio:Width);
+
+
 end
+
+for k = 1:numfiles 
+  jpg_path = fullfile(material_keyframes_path,jpegFiles(k).name);
+  temp1 = rgb2gray(imread(jpg_path)); 
+  material_keyframes{k, 1} = temp1(1:sample_ratio:Height,1:sample_ratio:Width);
+%   temp2 = temp1(1:sample_ratio:Height,1:sample_ratio:Width);
+%   material_keyframes{k, 1} = reshape(permute(temp2,[2 1]),[1 pixel_length]);
+
+%   use each composed frame to reduce each key frame of material
+  temp2 = abs(composedArray(:,:,1) - material_keyframes{k, 1});
+  material_keyframes{k, 2} = mean(mean(temp2));
+end
+material_keyframes{:, 2}
