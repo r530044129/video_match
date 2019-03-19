@@ -5,13 +5,13 @@ material_path = 'Shoot/material/shining_drive.m4v';
 materialObj = VideoReader(material_path);
 Height = materialObj.Height;
 Width = materialObj.Width;
-sample_ratio = 8;
+sample_ratio = 4;
 half_height = ceil(Height/sample_ratio);
 half_width = ceil(Width/sample_ratio);
 materialFrame = materialObj.NumberOfFrames;
 materialObj = VideoReader(material_path);
 
-materialArray = zeros(half_height, half_width, materialFrame);
+materialArray = zeros(half_height, half_width, materialFrame, 'uint8');
 k = 1;
 while hasFrame(materialObj)
     temp = rgb2gray(readFrame(materialObj));
@@ -28,7 +28,7 @@ composedObj = VideoReader(composed_path);
 composed_frame = 4;
 %   half_composed_frame is half of composed video frames 
 half_composed_frame = ceil(composedObj.NumberOfFrames/2);
-composedArray = zeros(half_height, half_width, composed_frame);
+composedArray = zeros(half_height, half_width, composed_frame, 'uint8');
 
 composedObj = VideoReader(composed_path);
 for k = 1:composed_frame
@@ -44,7 +44,7 @@ coefs = zeros(composed_frame,1);
 pitch_frames = zeros(composed_frame,1);
 for i = 1:composed_frame
     single_composed_frame = composedArray(i,:);
-    delta = abs(materialArray - single_composed_frame);
+    delta = abs(double(materialArray) - double(single_composed_frame));
     mean_delta = mean(delta,2);
     [coefs(i), pitch_frames(i)] = min(mean_delta(1:end-1));
 end  

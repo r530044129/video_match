@@ -12,7 +12,7 @@ half_width = ceil(Width/sample_ratio);
 pixel_length = half_height*half_width;
 %   half_composed_frame is half of composed video frames 
 half_composed_frame = ceil(composedObj.NumberOfFrames/2);
-composedArray = zeros(half_height, half_width, composed_frame,'uint8');
+composedArray = zeros(half_height, half_width, composed_frame, 'uint8');
 composedObj = VideoReader(composed_path);
 for k = 1:composed_frame
     temp = rgb2gray(read(composedObj,composed_frame+k));
@@ -34,7 +34,7 @@ for k = 1:numfiles
 %   material_keyframes{k, 1} = reshape(permute(temp2,[2 1]),[1 pixel_length]);
 
 %   use each composed frame to reduce each key frame of material
-  temp2 = abs(composedArray(:,:,1) - material_keyframes{k, 1});
+  temp2 = abs(double(composedArray(:,:,1)) - double(material_keyframes{k, 1}));
   material_keyframes{k, 2} = mean(mean(temp2));
 end
 material_keyframes{:, 2}
