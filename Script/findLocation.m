@@ -2,6 +2,7 @@
 % -Use part of composed shoot ,like a few frames,to pitch all
 %  the material shoot one by one. Find out the min mean delta
 %  of certain location's frame.
+
 clc;clear;
 %   step 1 :read meterial video
 tic;

@@ -6,14 +6,16 @@
 % type == 0 is material; else if composed; 
 
 function generate_key_frame(Path,inputfilename,type)
-%     Path = '/Volumes/’≈» Ω‹µƒ”≤≈Ã/test/';
-%     inputfilename = 'A012C017_171111_R2G2.mov';
+%     Path = 'Shoot/material/';
+%     inputfilename = 'shining_woman.m4v';
+%      type = 0;
 %     Path = strcat('Shoot/material/',inputfilename,'.m4v');  %Video Name  
+    tic
     vidobj = VideoReader(strcat(Path, inputfilename));   
 
     % loop through frames to determine mean and stddev
     N=vidobj.NumberofFrames;            
-    for i=1:N
+    parfor i=1:N
         k=read( vidobj,i);          
             if(i~=vidobj.NumberOfFrames);
                 j=read(vidobj,i+1);
@@ -26,10 +28,11 @@ function generate_key_frame(Path,inputfilename,type)
                 X(i)=in;
             end
     end
+    toc
     % extracts frames from threshold cacluated from the std. dev and mean
     mean=mean2(X);
     std=std2(X);
-    time = 4;
+    time = 2;
     threshold=mean+std*time;
     if type == 0
         saveKeyframesPath = fullfile('Keyframes','material',inputfilename);
@@ -40,7 +43,7 @@ function generate_key_frame(Path,inputfilename,type)
     if ~exist(saveKeyframesPath)
         mkdir(saveKeyframesPath)
     end
-    for i=1:N
+    parfor i=1:N
         p=read(vidobj,i);
             if(i~=vidobj.NumberOfFrames)
                 j=read(vidobj,i+1);
@@ -56,4 +59,5 @@ function generate_key_frame(Path,inputfilename,type)
                 end 
             end
     end 
+    toc
 end
